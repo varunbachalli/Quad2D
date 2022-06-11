@@ -59,3 +59,6 @@ class ButtonStack:
         if(key >= len(self._buttons)):
             key = 0
         return self._buttons[key]
+
+    def __len__(self):
+        return len(self._buttons)

@@ -14,7 +14,7 @@ def setup():
     
 
 def draw():
-    global inputManager, buttonManager, outpuManager
+    global inputManager, buttonManager, outputManager
     background(204)
     inputManager.InputDisplay([mouse_x,mouse_y])
     buttonManager.draw()

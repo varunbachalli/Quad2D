@@ -32,7 +32,7 @@ def SimulationSetup(inputManager, buttonManager):
     simManager = SimulationManager(inputManager, outputManager)
     #Quad Setup
     quadPlotter = QuadPlotter(inputManager.rect)
-    # leftButtonStack[0].setOnClick(quadPlotter.togglePlot)
+    buttonManager.setLeftButtonStackCallback([quadPlotter.togglePlot])
     outputManager.AddPlotter(quadPlotter)
     simManager.AssignQuadPlotter(quadPlotter)
 

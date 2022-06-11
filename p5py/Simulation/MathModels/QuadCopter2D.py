@@ -79,6 +79,7 @@ class QuadCopter2D:
         self.states[4] = (delT * previous_state[1])+ previous_state[4] # y 
         self.states[5] = (delT * previous_state[2])+ previous_state[5] # theta
 
+        print("Position Updated!!")
         if(self.plotter is not None):
             self.plotter.setPosition(self.get_position())
     '''

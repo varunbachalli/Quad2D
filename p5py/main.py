@@ -6,17 +6,19 @@ windowHeight = 640
 inputManager = None
 outputManager = None
 buttonManager = []
+simManager = None
 
 def setup():
-    global inputManager, buttonManager, outputManager
+    global inputManager, buttonManager, outputManager, simManager
     size(windowWidth, windowHeight)
-    inputManager, buttonManager, outputManager = UIsetup(windowWidth , windowHeight)
+    inputManager, buttonManager, outputManager, simManager = UIsetup(windowWidth , windowHeight)
     
 
 def draw():
-    global inputManager, buttonManager, outputManager
+    global inputManager, buttonManager, outputManager , simManager
     background(204)
     inputManager.InputDisplay([mouse_x,mouse_y])
+    simManager.UpdateSimulation()
     buttonManager.draw()
     outputManager.Plot()
 

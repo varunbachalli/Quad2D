@@ -32,16 +32,17 @@ def SimulationSetup(inputManager, buttonManager):
     simManager = SimulationManager(inputManager, outputManager)
     #Quad Setup
     quadPlotter = QuadPlotter(inputManager.rect)
-    buttonManager.setLeftButtonStackCallback([quadPlotter.togglePlot])
     outputManager.AddPlotter(quadPlotter)
     simManager.AssignQuadPlotter(quadPlotter)
+    buttonManager.setRightButtonStackCallback([quadPlotter.togglePlot])
+    buttonManager.setLeftButtonStackCallback([lambda: simManager.SetupSimulation(inputManager.startPosition, None)])
 
-    return outputManager
+    return outputManager, simManager
 
 def UIsetup(canvasWidth , canvasHeight):
     inputManager, buttonManager = InputUISetup(canvasWidth, canvasHeight)
-    outputManager = SimulationSetup(inputManager, buttonManager)
-    return inputManager, buttonManager, outputManager
+    outputManager, simManager = SimulationSetup(inputManager, buttonManager)
+    return inputManager, buttonManager, outputManager, simManager
 
 
     # drawing texts are computationally expensive for some reason.

@@ -1,4 +1,5 @@
 from .Plotters.QuadPlotter import QuadPlotter
+from .Plotters.TrajectoryPlotter import TrajectoryPlotter
 from .InputManager import InputManager
 from .DisplayManager import DisplayManager
 from .MathModels.QuadCopter2D import QuadCopter2D
@@ -15,7 +16,7 @@ class SimulationManager:
     '''
     def SetupSimulation(self, startPosition , endPosition):
         self.quadCopter.setStartPosition(startPosition)
-
+        self.simSetup = True
     
     def __init__(self, inputManager : InputManager,
                        displayManager : DisplayManager):
@@ -23,8 +24,20 @@ class SimulationManager:
         self.displayManager = displayManager
         self.quadCopter = QuadCopter2D(scalep5ToGlobal(inputManager.quadSize[0]),
                                        mass = 1)# mass = 1kg
+        self.simSetup = False
 
-    def StartSimulation(self):
+    def UpdateSimulation(self):
+        if(not self.simSetup):
+            return
+
+        if(self.quadCopter is None):
+            return
+
+        if(self.quadCopter.get_position()[1] < 1.5):
+            self.quadCopter.update_position([3*9.81/2, 3*9.81/2])
+        else:
+            self.quadCopter.update_position([0,0])
+
         # here write code to initialize trajectory planner.
         # then initialize the high level controller for performing operations in parallel thread. 
 
@@ -36,7 +49,6 @@ class SimulationManager:
         # then initialize the low Level controller to take outputs from the high level controller
         # then take the inputs from the low level controller and set it to the quad to use as required.
         # simulate the quad and then call self.displayManager.Plot() 
-        pass
 
     def PauseSimulation(self):
         pass
@@ -46,4 +58,7 @@ class SimulationManager:
 
     
     def AssignQuadPlotter(self, plotter : QuadPlotter):
-        self.quadCopter.SetPlotter(plotter)
+        if(self.quadCopter is not Nont):
+            self.quadCopter.SetPlotter(plotter)
+
+    def AssignTrajectoryPlotter(self, plotter : TrajectoryPlotter)

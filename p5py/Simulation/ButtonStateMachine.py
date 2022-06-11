@@ -65,8 +65,8 @@ class ButtonManager:
 
     def __setButtonStackCallback(self, buttonStack : ButtonStack, callbacks):
         for i, callback in enumerate(callbacks):
-            if(i < len(self.leftButtonStack)):
-                self.leftButtonStack[i].setOnClick(callback)
+            if(i < len(buttonStack)):
+                buttonStack[i].setOnClick(callback)
         
     def setLeftButtonStackCallback(self, callbacks):
         self.__setButtonStackCallback(self.leftButtonStack, callbacks)

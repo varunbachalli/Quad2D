@@ -7,6 +7,7 @@ from Simulation.InputManager import InputManager
 from Simulation.DisplayManager import DisplayManager
 from Simulation.SimulationManager import SimulationManager
 from Simulation.Plotters.QuadPlotter import QuadPlotter
+from Simulation.Plotters.TrajectoryPlotter import TrajectoryPlotter
 from Simulation.UIElements.Button import Button
 from Simulation.UIElements.ButtonStack import ButtonStack
 from Simulation.ButtonStateMachine import ButtonManager
@@ -27,15 +28,20 @@ def InputUISetup(canvasWidth, canvasHeight):
 
     return inputManager, buttonManager
 
-def SimulationSetup(inputManager, buttonManager):
+def SimulationSetup(inputManager : InputManager, buttonManager : ButtonManager):
     outputManager = DisplayManager()
     simManager = SimulationManager(inputManager, outputManager)
     #Quad Setup
     quadPlotter = QuadPlotter(inputManager.rect)
     outputManager.AddPlotter(quadPlotter)
     simManager.AssignQuadPlotter(quadPlotter)
-    buttonManager.setRightButtonStackCallback([quadPlotter.togglePlot])
-    buttonManager.setLeftButtonStackCallback([lambda: simManager.SetupSimulation(inputManager.startPosition, None)])
+
+    trajPlotter = TrajectoryPlotter(10, inputManager.rect)
+    outputManager.AddPlotter(trajPlotter)
+    simManager.AssignTrajectoryPlotter(trajPlotter)
+
+    buttonManager.setRightButtonStackCallback([quadPlotter.togglePlot, trajPlotter.togglePlot])
+    buttonManager.setLeftButtonStackCallback([lambda: simManager.SetupSimulation(inputManager.startPosition, inputManager.endPosition)])
 
     return outputManager, simManager
 

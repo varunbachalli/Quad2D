@@ -28,10 +28,10 @@ class ButtonManager:
         rightButtonStack = ButtonStack(3 * canvasWidth//4, canvasWidth//4, [canvasWidth , canvasHeight])
 
         buttons = rightButtonStack.CreateNButtons(3)
-        buttons[0].setText("Show\nTrajectory")
+        buttons[0].setText("Show\nQuad")
         buttons[0].setOnClick(lambda : print("Show Trajectory Pressed"))
 
-        buttons[1].setText("Show\nLow Level\nControls")
+        buttons[1].setText("Show\nTrajectory")
         buttons[1].setOnClick(lambda : print("Show Low Level Controls Pressed"))
 
         buttons[2].setText("Show\nMotion\nPlanning")

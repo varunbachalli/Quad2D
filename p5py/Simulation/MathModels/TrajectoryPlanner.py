@@ -1,9 +1,11 @@
 import numpy as np
 from casadi import *
-from quadcopter import QuadCopter2D
+from .QuadCopter2D import QuadCopter2D
 import matplotlib.pyplot as plt
 
-class TrajectoryOptimization:
+from Simulation.Plotters.TrajectoryPlotter import TrajectoryPlotter
+
+class DynamicOptimization_Trajectory:
     '''
     used to get the quad parameters like I, l ,m
     '''
@@ -54,8 +56,8 @@ class TrajectoryOptimization:
                       ydot,
                       phidot)
 
-        W = xdot * xdot + ydot * ydot + phidot * phidot + F1 * F1 + F2 * F2
-
+        # W = xdot * xdot + ydot * ydot + 5*phidot * phidot #+ F1 * F1 + F2 * F2
+        W =  F1 * F1 + F2 * F2 + 10* ydot * ydot + 10*phidot * phidot
         f = Function('f', [x_, u_], [ddx],['x_k','F'],['f_k'])
         cost = Function("W", [x_ , u_], [W], ["x_k" , 'F'], ["wk"])
         return f, cost
@@ -117,39 +119,6 @@ class TrajectoryOptimization:
         solver = nlpsol('solver', 'ipopt', prob)
         return solver, nlp_init
 
-    def Plots(self, w, interpolatedStates = None , interpolatedTime = None):
-        xdot = w[0:-1:self.numStates + self.numControls]
-        ydot = w[1:-1:self.numStates + self.numControls]
-        phidot =w[2:-1:self.numStates + self.numControls]
-        x = w[3:-1:self.numStates + self.numControls]
-        y = w[4:-1:self.numStates + self.numControls]
-        phi = w[5:-1:self.numStates + self.numControls]
-        F1 = w[6:-1:self.numStates + self.numControls]
-        F2 = w[7:-1:self.numStates + self.numControls]
-        time = np.linspace(0, t.totalTime, self.N)
-        plt.figure("xvel")
-        plt.plot( time, xdot, 'go-', label='xvel', linewidth=2)
-        if(interpolatedTime is not None): plt.plot(interpolatedTime,interpolatedStates[:,0],'k*', label = 'inter_xvel')
-        plt.figure("yvel")
-        plt.plot( time, ydot, 'go-', label='yvel', linewidth=2)
-        if(interpolatedTime is not None): plt.plot(interpolatedTime,interpolatedStates[:,1],'k*', label = 'inter_xvel')
-        plt.figure("phivel")
-        plt.plot( time, phidot, 'go-', label='phivel', linewidth=2)
-        if(interpolatedTime is not None): plt.plot(interpolatedTime,interpolatedStates[:,2],'k*', label = 'inter_xvel')
-        plt.figure("x")
-        plt.plot( time, x, 'go-', label='x', linewidth=2)
-        if(interpolatedTime is not None): plt.plot(interpolatedTime,interpolatedStates[:,3],'k*', label = 'inter_xvel')
-        plt.figure("y")
-        plt.plot( time, y, 'go-', label='y', linewidth=2)
-        if(interpolatedTime is not None): plt.plot(interpolatedTime,interpolatedStates[:,4],'k*', label = 'inter_xvel')
-        plt.figure("phi")
-        plt.plot( time, phi, 'go-', label='phi', linewidth=2)
-        if(interpolatedTime is not None): plt.plot(interpolatedTime,interpolatedStates[:,5],'k*', label = 'inter_xvel')
-        plt.figure("F1")
-        plt.plot( time, F1, 'go-', label='F1', linewidth=2)
-        plt.figure("F2")
-        plt.plot( time, F2, 'go-', label='F2', linewidth=2)
-    
     def GetXAtTime(self, t):
         if(self.splines == None):
             return [0]*self.numStates
@@ -201,6 +170,8 @@ class TrajectoryOptimization:
             })
         
     def SetTrajectory(self, currentState, targetState):
+        if(currentState is None or targetState is None):
+            return
         # reset w0 reset lbw and ubw
         w0 = self.nlpinit['w0']
         lbw = self.nlpinit['lbw']
@@ -223,16 +194,24 @@ class TrajectoryOptimization:
         w_opt = sol['x'].full().flatten()
         self.w_opt = w_opt
         self.InterpolateStates(self.w_opt)
+        if(self.plotter is not None):
+            numPoints =self.plotter.numPoints
+            hk = self.totalTime/numPoints
+            traj = []
+            for i in range(numPoints):
+                x = self.GetXAtTime(i* hk)
+                traj.append(x[3:6])
+            self.plotter.setTrajectory(traj)
 
-    def getPlots(self):
-        x = self.w_opt[3:-1:self.numStates + self.numControls]
-        y = self.w_opt[4:-1:self.numStates + self.numControls]
-        return x, y
+    def SetPlotter(self, plotter : TrajectoryPlotter):
+        self.plotter = plotter
 
+
+    
 
 if __name__ == "__main__":
     q = QuadCopter2D(l = 1.5, start_orientation=0, start_position=np.ones(2))
-    t = TrajectoryOptimization(q, 100)
+    t = DynamicOptimization_Trajectory(q, 100)
     target = np.zeros_like(q.states)
     target[3:5] = [4,4]
     t.SetTrajectory(q.states, target)

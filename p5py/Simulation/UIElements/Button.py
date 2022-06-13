@@ -42,13 +42,10 @@ class Button:
             print("No onclick")
             return
 
-        try:
-            if(param is None):
-                self.function()
-            else:
-                self.function(param)
-        except:
-            print("function doesn't take this type of!")
+        if(param is None):
+            self.function()
+        else:
+            self.function(param)
 
     '''
     returns if the pointer is inside the button area

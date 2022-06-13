@@ -3,6 +3,7 @@ from .Plotters.TrajectoryPlotter import TrajectoryPlotter
 from .InputManager import InputManager
 from .DisplayManager import DisplayManager
 from .MathModels.QuadCopter2D import QuadCopter2D
+from .MathModels.TrajectoryPlanner import DynamicOptimization_Trajectory
 from .Utilities.UIUtils import scalep5ToGlobal
 
 '''
@@ -16,6 +17,8 @@ class SimulationManager:
     '''
     def SetupSimulation(self, startPosition , endPosition):
         self.quadCopter.setStartPosition(startPosition)
+        endState = [0,0,0,endPosition[0], endPosition[1], 0]
+        self.trajectoryPlanner.SetTrajectory(self.quadCopter.states,endState)
         self.simSetup = True
     
     def __init__(self, inputManager : InputManager,
@@ -24,6 +27,8 @@ class SimulationManager:
         self.displayManager = displayManager
         self.quadCopter = QuadCopter2D(scalep5ToGlobal(inputManager.quadSize[0]),
                                        mass = 1)# mass = 1kg
+        self.trajectoryPlanner = DynamicOptimization_Trajectory(self.quadCopter, 50)
+
         self.simSetup = False
 
     def UpdateSimulation(self):
@@ -58,7 +63,9 @@ class SimulationManager:
 
     
     def AssignQuadPlotter(self, plotter : QuadPlotter):
-        if(self.quadCopter is not Nont):
+        if(self.quadCopter is not None ):
             self.quadCopter.SetPlotter(plotter)
 
-    def AssignTrajectoryPlotter(self, plotter : TrajectoryPlotter)
+    def AssignTrajectoryPlotter(self, plotter : TrajectoryPlotter): 
+        if(self.trajectoryPlanner is not None ):
+            self.trajectoryPlanner.SetPlotter(plotter)

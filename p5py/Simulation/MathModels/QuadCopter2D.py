@@ -81,6 +81,7 @@ class QuadCopter2D:
 
         if(self.plotter is not None):
             self.plotter.setPosition(self.get_position())
+            self.plotter.setAngle(self.get_orientation())
     '''
     returns the global position of the quadcopter.
     '''

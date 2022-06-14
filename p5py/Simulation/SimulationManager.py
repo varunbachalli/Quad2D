@@ -4,6 +4,7 @@ from .InputManager import InputManager
 from .DisplayManager import DisplayManager
 from .MathModels.QuadCopter2D import QuadCopter2D
 from .MathModels.TrajectoryPlanner import DynamicOptimization_Trajectory
+from .MathModels.MPC_TrajectoryFollower import MPC_TrajectoryFollower
 from .Utilities.UIUtils import scalep5ToGlobal
 
 '''
@@ -19,6 +20,7 @@ class SimulationManager:
         self.quadCopter.setStartPosition(startPosition)
         endState = [0,0,0,endPosition[0], endPosition[1], 0]
         self.trajectoryPlanner.SetTrajectory(self.quadCopter.states,endState)
+        self.currentTime = 0.0
         self.simSetup = True
     
     def __init__(self, inputManager : InputManager,
@@ -29,6 +31,7 @@ class SimulationManager:
                                        mass = 1)# mass = 1kg
         self.trajectoryPlanner = DynamicOptimization_Trajectory(self.quadCopter, 50)
 
+        self.controller = MPC_TrajectoryFollower(self.quadCopter)
         self.simSetup = False
 
     def UpdateSimulation(self):
@@ -38,10 +41,10 @@ class SimulationManager:
         if(self.quadCopter is None):
             return
 
-        if(self.quadCopter.get_position()[1] < 1.5):
-            self.quadCopter.update_position([3*9.81/2, 3*9.81/2])
-        else:
-            self.quadCopter.update_position([0,0])
+        
+        controls = self.controller.GetControlInput(self.quadCopter.states, self.trajectoryPlanner, self.currentTime)
+        self.quadCopter.update_position(controls)
+        self.currentTime += 0.01
 
         # here write code to initialize trajectory planner.
         # then initialize the high level controller for performing operations in parallel thread. 

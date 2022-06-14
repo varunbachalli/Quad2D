@@ -20,3 +20,7 @@ class QuadPlotter(Plotter):
     def setPosition(self, position):
         position = transformPositionToP5(self.parentRect, position)
         self.rect.updateCenter(position)
+
+    def setAngle(self,angle):
+        self.angle = angle
+        self.rect.updateAngle(angle)

@@ -1,6 +1,7 @@
 from .APlotter import Plotter
 from Simulation.UIElements.ButtonUtils import Rect
 from ..Utilities.UIUtils import transformPositionToP5
+from scipy.interpolate import CubicSpline
 from p5 import *
 
 class TrajectoryPlotter(Plotter):
@@ -33,16 +34,18 @@ class TrajectoryPlotter(Plotter):
                 self.rects[i].updateAngle(p[-1])
 
         self.points = np.array(self.points)
-        z = np.polyfit(self.points[:,0], self.points[:,1], 5)
-        self.polynom = np.poly1d(z)
-        self.minX = np.min(self.points[:,0])
-        self.maxX = np.max(self.points[:,0])
+        try:
+            self.spline = CubicSpline(self.points[:,0], self.points[:,1])
+            self.minX = np.min(self.points[:,0])
+            self.maxX = np.max(self.points[:,0])
+        except:
+            pass
 
     def drawTrajectory(self):
-        if(self.polynom is None or self.minX is None or self.maxX is None):
+        if(self.spline is None or self.minX is None or self.maxX is None):
             return
         
-        polyPoints = np.array([[x,self.polynom(x)] for x in np.linspace(self.minX, self.maxX, 100)])
+        polyPoints = np.array([[x,self.spline(x)] for x in np.linspace(self.minX, self.maxX, 100)])
         polyLines = zip(polyPoints[:-1], polyPoints[1:])
         for p1, p2 in polyLines:
             line(*p1, *p2)

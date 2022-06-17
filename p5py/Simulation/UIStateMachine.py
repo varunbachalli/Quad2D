@@ -30,6 +30,7 @@ If Simulation Is In Setup:
 from enum import Enum
 from Simulation.InputManager import InputManager
 from Simulation.DisplayManager import DisplayManager
+from Simulation.Plotters.ControlPlotter import ControlPlotter
 from Simulation.SimulationManager import SimulationManager
 from Simulation.Plotters.QuadPlotter import QuadPlotter
 from Simulation.Plotters.TrajectoryPlotter import TrajectoryPlotter
@@ -83,7 +84,11 @@ class UIStateMachine:
         outputManager.AddPlotter(trajPlotter)
         simManager.AssignTrajectoryPlotter(trajPlotter)
 
-        buttonManager.setRightButtonStackCallback([quadPlotter.togglePlot, trajPlotter.togglePlot])
+        controlPlotter = ControlPlotter(inputManager.rect)
+        outputManager.AddPlotter(controlPlotter)
+        simManager.AssignControlPlotter(controlPlotter)
+
+        buttonManager.setRightButtonStackCallback([quadPlotter.togglePlot, trajPlotter.togglePlot , controlPlotter.togglePlot])
         buttonManager.setLeftButtonStackCallback([self.CallToActionButtonPressed])
 
         return outputManager, simManager
@@ -121,19 +126,14 @@ class UIStateMachine:
 
     def SetupActions(self):
         self.inputManager.ResetStates()
-        self.inputManager.SetActive(True) # Show the input quad copters
         self.buttonManager.ShowAllButtonTexts() # shows all the texts and set colors to default
         self.outputManager.SetActive(False) # hide the outputs.
         
-
-        
     def PauseActions(self):
-        self.inputManager.SetActive(True)
         self.buttonManager.ShowAllButtonTexts()
         self.outputManager.SetActive(True)
 
     def StartActions(self):
-        self.inputManager.SetActive(False)
         self.buttonManager.HideAllButtonTexts()
         self.outputManager.SetActive(True)
 

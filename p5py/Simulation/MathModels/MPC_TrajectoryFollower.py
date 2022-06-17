@@ -3,6 +3,7 @@ from casadi import *
 import matplotlib.pyplot as plt
 from .TrajectoryPlanner import DynamicOptimization_Trajectory
 from .QuadCopter2D import QuadCopter2D
+from ..Plotters.ControlPlotter import ControlPlotter
 class MPC_TrajectoryFollower:
     def __init__(self, quad : QuadCopter2D, steps = 10, delT = 1e-2):
         self.l = quad.l
@@ -26,6 +27,7 @@ class MPC_TrajectoryFollower:
         self.model, self.cost = self.CreateCostAndModel()
         self.modelIntegration, self.costIntengration = self.GetIntegrator(self.model, self.cost)
         self.nlp = self.SetUpNLP(self.modelIntegration, self.costIntengration)
+        self.plotter = None
 
 
     def CreateCostAndModel(self):
@@ -196,8 +198,18 @@ class MPC_TrajectoryFollower:
         sol = solver(x0=w0, lbx=lbw, ubx=ubw, lbg=lbg, ubg=ubg)
         
         self.w_opt = sol['x'].full().flatten()
+
+        if(self.plotter is not None):
+            x = self.w_opt[3:self.totalOptimizationVariables:self.numStates + self.numControls]
+            y = self.w_opt[4:self.totalOptimizationVariables:self.numStates + self.numControls]
+            phi = self.w_opt[5:self.totalOptimizationVariables:self.numStates + self.numControls]
+            traj = list(zip(x,y,phi))
+            self.plotter.setTrajectory(traj)
+
         return self.w_opt[self.numStates: self.numStates+ self.numControls]
 
+    def SetPlotter(self, plotter : ControlPlotter):
+        self.plotter = plotter
     
 if __name__ == "__main__":
     q = QuadCopter2D(l = 1.5, start_orientation=0, start_position=np.ones(2))

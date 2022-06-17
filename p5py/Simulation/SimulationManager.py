@@ -1,5 +1,6 @@
 from .Plotters.QuadPlotter import QuadPlotter
 from .Plotters.TrajectoryPlotter import TrajectoryPlotter
+from .Plotters.ControlPlotter import ControlPlotter
 from .InputManager import InputManager
 from .DisplayManager import DisplayManager
 from .MathModels.QuadCopter2D import QuadCopter2D
@@ -38,6 +39,7 @@ class SimulationManager:
         self.simSetup = False
         self.quadPlotter = None
         self.trajPlotter = None
+        self.controlPlotter = None
         self.simRunning = False
 
     def UpdateSimulation(self):
@@ -72,6 +74,12 @@ class SimulationManager:
             self.trajectoryPlanner.SetPlotter(plotter)
             self.trajPlotter = plotter
 
+    def AssignControlPlotter(self, plotter : ControlPlotter):
+        if(self.controller is not None):
+            self.controller.SetPlotter(plotter)
+            self.controlPlotter = plotter
+
     def SetActive(self, active) : 
         if(self.trajPlotter is not None): self.trajPlotter.togglePlot(active)
         if(self.quadPlotter is not None): self.quadPlotter.togglePlot(active)
+        if(self.controlPlotter is not None): self.controlPlotter.togglePlot(active)

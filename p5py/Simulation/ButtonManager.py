@@ -4,7 +4,7 @@ this file decides the states of the buttons in the scene.
 from p5 import *
 from sys import platform
 from .UIElements.ButtonStack import ButtonStack
-from .constants import simquadColor, trajquadColor
+from .constants import simquadColor, trajquadColor, controlquadColor
 class ButtonManager:
     def buttonsSetup(self):
         if platform == "darwin":
@@ -26,9 +26,10 @@ class ButtonManager:
 
         rightButtonStack = ButtonStack(3 * canvasWidth//4, canvasWidth//4, [canvasWidth , canvasHeight])
 
-        buttons = rightButtonStack.CreateNButtons(2)
+        buttons = rightButtonStack.CreateNButtons(3)
         buttons[0].setText("Show\nQuad")
         buttons[1].setText("Show\nTrajectory")
+        buttons[2].setText("Show\nControl")
 
         for button in buttons:
             rightButtonStack.Addbutton(button)
@@ -73,6 +74,7 @@ class ButtonManager:
         self.leftButtonStack.ShowText(False)
         self.rightButtonStack[0].setButtonColor(simquadColor)
         self.rightButtonStack[1].setButtonColor(trajquadColor)
+        self.rightButtonStack[2].setButtonColor(controlquadColor)
         self.leftButtonStack[0].setButtonColor([0,255,0,255])
 
     
@@ -81,4 +83,5 @@ class ButtonManager:
         self.leftButtonStack.ShowText(True)
         self.rightButtonStack[0].setButtonColor(None)
         self.rightButtonStack[1].setButtonColor(None)
+        self.rightButtonStack[2].setButtonColor(None)
         self.leftButtonStack[0].setButtonColor(None)

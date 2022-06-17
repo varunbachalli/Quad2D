@@ -1,5 +1,7 @@
 # Simulation / Dyanmic Optimization based Trajectory Planning and MPC Trajectory following control of a Planar QuadCopter (2D)
 
+![image](Image/Demo.gif)
+
 The UI for the code is written in p5py. Which is the python version of p5js which is a interactive drawing tool for java script. Unfortunately p5py is not as mature as p5js. It lacks some functionalities like buttons, and is specially laggy when drawing text on screen. I used it is because i am familiar with the lifecycle and usage of p5js and have used it in the past, so prototyping UI for the project is easier.
 
 

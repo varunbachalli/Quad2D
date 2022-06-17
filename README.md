@@ -19,7 +19,11 @@ ___
 The quad copter is modelled as a simple bar with forces on either side and gravity acting downwards from the center of the bar. Air resistance and motor characteristics are ignored currently. They will be included in later versions. 
 
 The Nonlinear state space model of the quadcopter can be implemented as 
+
+
 ![image](Image/CodeCogsEqn-4.svg)
+
+
 
 where $F_0$ and $F_1$ are forces acting on the left corner and the right corner of the drone. 
 
@@ -33,13 +37,18 @@ ___
 The Dynamic Trajectory Optimization problem is used to get the optimal trajectory for the drone from a given start position to end position.
 
 The problem that is solved is a trapezoidal quadrature approximation based method for approximating the system dynamics. In this optimization problem, total time to reach the end point is added as a cost in the problem that is to be minimized.
+
+
 ![image](Image/CodeCogsEqn.svg)
 
 
 The Nonlinear state space model used in the dynamic trajectory optimization is the same as that used for the Quadcopter simulation.
 
 To solve the above problem. The integral cost function and the system dynamics are approximated using the trapezoidal quadrature. 
+
+
 ![image](Image/CodeCogsEqn-2.svg)
+
 
 where $h_k$ is the time gap between two grid points. 
 

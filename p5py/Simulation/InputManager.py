@@ -3,10 +3,6 @@ from .UIElements.ButtonUtils import Rect
 from .UIElements.Button import Button
 from .Utilities.UIUtils import transformPositionToGlobal
 
-class ProgramState(enum.Enum):
-    Start = 1
-    Stop = 2
-    Setup = 3
 
 '''
 takes the input from the screen and passes the relevant information to the simulation.
@@ -17,12 +13,13 @@ class InputManager:
                          [windowStartX + windowWidth, windowStartY + windowHeight])
         self.startPosition = None
         self.endPosition = None
-        self.programState = ProgramState.Setup
         self.startRect = None
         self.endRect = None
         self.quadSize = [100,20]
         self.currentRect = Rect([windowStartX, windowStartY],[windowStartX + self.quadSize[0], windowStartY + self.quadSize[1]])
+        self.active = True
 
+    def SetActive(self, active) : self.active = active
     def GetRect(self) : return self.rect
     '''
     checks if a point is inside the rect
@@ -51,6 +48,8 @@ class InputManager:
 
     
     def InputDisplay(self,mousePosition):
+        if(not self.active):
+            return
         if(self.startRect is not None): 
             self.startRect.draw([255,0,0])
         if(self.endPosition is not None): 
@@ -61,8 +60,6 @@ class InputManager:
                 self.currentRect.draw([0,127])
     
     def SetPosition(self,position):
-        if(self.programState == ProgramState.Start or self.programState == ProgramState.Stop):
-            return
         if(self.startPosition is None or self.endPosition is not None):
             self.setStart(position)
             self.endPosition = None
@@ -70,20 +67,10 @@ class InputManager:
         else:
           self.setEnd(position)
     
-    def ChangeButtonState(self,callToActionButton : Button):
-        if(self.programState == ProgramState.Setup): # button pressed when in setup
-            if(self.startPosition is not None and self.endPosition is not None):
-                self.programState = ProgramState.Start;         
-                callToActionButton.setText("Running")
-
-        elif(self.programState == ProgramState.Start): # button pressed when running.
-            self.startPosition = None
-            self.endPosition = None
-            self.programState = ProgramState.Stop
-            callToActionButton.setText("Stopped")
-
-        elif(self.programState == ProgramState.Stop):
-            self.programState = ProgramState.Setup
-            callToActionButton.setText("Select Positions")
 
 
+    def ResetStates(self):
+        self.startPosition = None
+        self.endPosition = None
+        self.startRect = None
+        self.endRect = None

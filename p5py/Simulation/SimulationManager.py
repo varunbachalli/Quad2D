@@ -16,12 +16,15 @@ class SimulationManager:
     it creates a plotter for each of the objects and then assigns them to the object.
     each object is meant to set values in the plotter after the calculation is complete.
     '''
+
     def SetupSimulation(self, startPosition , endPosition):
         self.quadCopter.setStartPosition(startPosition)
         endState = [0,0,0,endPosition[0], endPosition[1], 0]
         self.trajectoryPlanner.SetTrajectory(self.quadCopter.states,endState)
         self.currentTime = 0.0
         self.simSetup = True
+        self.StartSimulation()
+        
     
     def __init__(self, inputManager : InputManager,
                        displayManager : DisplayManager):
@@ -33,42 +36,42 @@ class SimulationManager:
 
         self.controller = MPC_TrajectoryFollower(self.quadCopter)
         self.simSetup = False
+        self.quadPlotter = None
+        self.trajPlotter = None
+        self.simRunning = False
 
     def UpdateSimulation(self):
-        if(not self.simSetup):
+        if(not self.simSetup or not self.simRunning):
             return
 
         if(self.quadCopter is None):
             return
 
-        
+
         controls = self.controller.GetControlInput(self.quadCopter.states, self.trajectoryPlanner, self.currentTime)
         self.quadCopter.update_position(controls)
         self.currentTime += 0.01
 
-        # here write code to initialize trajectory planner.
-        # then initialize the high level controller for performing operations in parallel thread. 
-
-        # Note: the low level controller should just use the next input in the sequence to carry 
-        # out it's process if the MPC controller isn't done yet. 
-        # the MPC controller should run on a seperate thread to avoid stalling the simulation.
-        # use multiprocessing.Process from the tutorials. 
-
-        # then initialize the low Level controller to take outputs from the high level controller
-        # then take the inputs from the low level controller and set it to the quad to use as required.
-        # simulate the quad and then call self.displayManager.Plot() 
+    def StartSimulation(self):
+        self.simRunning = True
 
     def PauseSimulation(self):
-        pass
+        self.simRunning = False
 
     def StopSimulation(self):
-        pass
+        self.simSetup = False
 
     
     def AssignQuadPlotter(self, plotter : QuadPlotter):
         if(self.quadCopter is not None ):
             self.quadCopter.SetPlotter(plotter)
+            self.quadPlotter = plotter
 
     def AssignTrajectoryPlotter(self, plotter : TrajectoryPlotter): 
         if(self.trajectoryPlanner is not None ):
             self.trajectoryPlanner.SetPlotter(plotter)
+            self.trajPlotter = plotter
+
+    def SetActive(self, active) : 
+        if(self.trajPlotter is not None): self.trajPlotter.togglePlot(active)
+        if(self.quadPlotter is not None): self.quadPlotter.togglePlot(active)

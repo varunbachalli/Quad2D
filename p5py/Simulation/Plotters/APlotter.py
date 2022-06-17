@@ -8,5 +8,9 @@ class Plotter(ABC):
     def plot(self):
         pass
 
-    def togglePlot(self):
+    def togglePlot(self, show = None):
+        if(show is not None):
+            self.show = show
+            return
+            
         self.show = not self.show

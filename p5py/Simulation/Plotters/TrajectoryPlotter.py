@@ -3,6 +3,7 @@ from Simulation.UIElements.ButtonUtils import Rect
 from ..Utilities.UIUtils import transformPositionToP5
 from scipy.interpolate import CubicSpline
 from p5 import *
+from ..constants import trajquadColor
 
 class TrajectoryPlotter(Plotter):
 
@@ -23,8 +24,8 @@ class TrajectoryPlotter(Plotter):
     def plot(self):
         if(self.show):
             for rect in self.rects:
-                rect.draw([0,150,150,150])
-            self.drawTrajectory()
+                rect.draw(trajquadColor)
+            # self.drawTrajectory()
             
     def setTrajectory(self, points):
         for i, p in enumerate(points):

@@ -22,6 +22,7 @@ class Button:
         self.active = True
         self.text = "Custom Button"
         self.function = None
+        self.color = None
 
     '''
     sets the lambda to be called on click
@@ -63,7 +64,7 @@ class Button:
         if(not self.active):
             return
 
-        self.rect.draw()
+        self.rect.draw(self.color)
 
     def drawText(self):
         if(not self.active):
@@ -71,3 +72,6 @@ class Button:
 
         if(self.text is not None):
             self.rect.drawText(self.text)
+
+    def setButtonColor(self, color):
+        self.color = color

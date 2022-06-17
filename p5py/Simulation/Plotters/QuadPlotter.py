@@ -1,6 +1,7 @@
 from .APlotter import Plotter
 from Simulation.UIElements.ButtonUtils import Rect
 from ..Utilities.UIUtils import transformPositionToP5
+from ..constants import simquadColor
 class QuadPlotter(Plotter):
     def __init__(self, parentRect : Rect):
         super().__init__()
@@ -15,7 +16,7 @@ class QuadPlotter(Plotter):
     '''
     def plot(self):
         if(self.show):
-            self.rect.draw([175, 175])
+            self.rect.draw(simquadColor)
 
     def setPosition(self, position):
         position = transformPositionToP5(self.parentRect, position)

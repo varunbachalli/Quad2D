@@ -23,6 +23,9 @@ class ButtonStack:
             self.rect = Rect(topLeft, bottomRight)
 
         self._buttons = []
+        self.showText = True
+
+    def ShowText(self, show) :  self.showText = show
     
     def IsPointerInside(self, pointerPosition):
         if(self.rect.IsPointInRect(pointerPosition)):
@@ -44,6 +47,7 @@ class ButtonStack:
         [button.drawButton() for button in self._buttons]
 
     def drawButtonTexts(self):
+        if(not self.showText): return
         [button.drawText() for button in self._buttons]
 
     def CreateNButtons(self, N):

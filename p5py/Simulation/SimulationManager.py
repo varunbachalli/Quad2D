@@ -35,7 +35,7 @@ class SimulationManager:
                                        mass = 1)# mass = 1kg
         self.trajectoryPlanner = DynamicOptimization_Trajectory(self.quadCopter, 50)
 
-        self.controller = MPC_TrajectoryFollower(self.quadCopter)
+        self.controller = MPC_TrajectoryFollower(self.quadCopter,10,delT= 0.1)
         self.simSetup = False
         self.quadPlotter = None
         self.trajPlotter = None
